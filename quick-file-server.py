@@ -23,7 +23,7 @@ __author__ = "Gus Esquivel"
 __copyright__ = "Copyright 2010"
 __credits__ = ["Gus Esquivel"]
 __license__ = "GPL"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __maintainer__ = "Gus Esquivel"
 __email__ = "gesquive@gmail.com"
 __status__ = "Production"
@@ -41,7 +41,7 @@ DATE_FORMAT = '%Y-%m-%d&nbsp;%H:%M:%S'
 
 def usage():
     usage = \
-"""Usage: %s [options] root_dir
+"""Usage: %s [options]
     Run a local http server with the given root directory.
 Options and arguments:
   -r --root-dir <path>              The directory path for the hosted files.
@@ -480,7 +480,7 @@ HTML_TEMPLATE = """
     <link rel='stylesheet' href='/.virtual/styles.css'>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF8"/>
 
-    <title>%(title)s - QuickServer</title>
+    <title>%(title)s - QuickFileServer</title>
 </head>
 <body class="">
 <div id="container">
