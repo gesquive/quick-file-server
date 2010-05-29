@@ -23,11 +23,12 @@ __author__ = "Gus Esquivel"
 __copyright__ = "Copyright 2010"
 __credits__ = ["Gus Esquivel"]
 __license__ = "GPL"
-__version__ = "0.5"
+__version__ = "1.0.1"
 __maintainer__ = "Gus Esquivel"
 __email__ = "gesquive@gmail.com"
 __status__ = "Production"
 
+info_file_path = 'https://raw.github.com/gesquive/quick-file-server/master/quick-file-server.info'
 script_www = 'https://github.com/gesquive/quick-file-server'
 
 #--------------------------------------
@@ -48,6 +49,9 @@ Options and arguments:
   -p --http-port <port>             The port for the server to listen on.
                                         (default: 8080)
   -n --no-dir-list                  Turn off directory listing.
+  -u --update                       Checks server for an update, replaces
+                                        the current version if there is a
+                                        newer version available.
   -h --help                         Prints this message.
   -v --verbose                      Writes all messages to console.
 
@@ -56,14 +60,15 @@ Options and arguments:
 
     print usage
 
+
 def main():
     global verbose, debug
     verbose = False
     debug = False
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hvr:p:n", \
-        ["help", "verbose", "root-dir=", "http-port=", "no-dir-list"])
+        opts, args = getopt.getopt(sys.argv[1:], "hvur:p:n", \
+        ["help", "verbose", "update", "root-dir=", "http-port=", "no-dir-list"])
     except getopt.GetoptError, err:
         print str(err)
         sys.exit(2)
@@ -86,6 +91,9 @@ def main():
             debug = True
         elif o in ("-v", "--verbose"):
             verbose = True
+        elif o in ("-u", "--update"):
+            update(info_file_path)
+            sys.exit(0)
         elif o in ("-p", "--http-port"):
             if not a.isdigit():
                 print "http-port: '%s' must be a valid integer." % a
@@ -291,6 +299,123 @@ def get_size(file_path):
     mega = kilo / 1024
     return '%s MB' % round(float(kilo) / 1024, 1)
 
+
+def update(info_file_path, force_update=False):
+    """
+    Attempts to download the update url in order to find if an update is needed.
+    If an update is needed, the current script is backed up and the update is
+    saved in its place.
+    """
+    import urllib
+    import re
+    from subprocess import call
+    def compare_versions(vA, vB):
+        """
+        Compares two version number strings
+        @param vA: first version string to compare
+        @param vB: second version string to compare
+        @author <a href="http_stream://sebthom.de/136-comparing-version-numbers-in-jython-pytho/">Sebastian Thomschke</a>
+        @return negative if vA < vB, zero if vA == vB, positive if vA > vB.
+        """
+        if vA == vB: return 0
+
+        def num(s):
+            if s.isdigit(): return int(s)
+            return s
+
+        seqA = map(num, re.findall('\d+|\w+', vA.replace('-SNAPSHOT', '')))
+        seqB = map(num, re.findall('\d+|\w+', vB.replace('-SNAPSHOT', '')))
+
+        # this is to ensure that 1.0 == 1.0.0 in cmp(..)
+        lenA, lenB = len(seqA), len(seqB)
+        for i in range(lenA, lenB): seqA += (0,)
+        for i in range(lenB, lenA): seqB += (0,)
+
+        rc = cmp(seqA, seqB)
+
+        if rc == 0:
+            if vA.endswith('-SNAPSHOT'): return -1
+            if vB.endswith('-SNAPSHOT'): return 1
+        return rc
+
+    # dl the info file and parse it for version and dl path
+    try:
+        http_stream = urllib.urlopen(info_file_path)
+        update_file = http_stream.read()
+        http_stream.close()
+    except IOError, (errno, strerror):
+        print "Unable to retrieve version data"
+        print "Error %s: %s" % (errno, strerror)
+        return
+
+    match_regex = re.search(r'version: (\S+)', update_file)
+    if not match_regex:
+        print "No version info could be found"
+        return
+    update_version  =  match_regex.group(1)
+    match_regex = re.search(r'from: (\S+)', update_file)
+    if not match_regex:
+        print "No update location was specified"
+        return
+    dl_url = match_regex.group(1)
+
+    if not update_version:
+        print "Unable to parse version data"
+        return
+
+    if force_update:
+        print "Forcing update, downloading version %s..." \
+            % update_version
+    else:
+        cmp_result = compare_versions(__version__, update_version)
+        if cmp_result < 0:
+            print "Newer version %s available, downloading..." % update_version
+        elif cmp_result > 0:
+            print "Local version %s newer then available %s, not updating." \
+                % (__version__, update_version)
+            return
+        else:
+            print "You already have the latest version."
+            return
+
+    # dl, backup, and save the updated script
+    app_path = os.path.realpath(sys.argv[0])
+
+    if not os.access(app_path, os.W_OK):
+        print "Cannot update --  unable to write to %s" % app_path
+
+    dl_path = app_path + ".new"
+    backup_path = app_path + ".old"
+    try:
+        dl_file = open(dl_path, 'w')
+        http_stream = urllib.urlopen(dl_url)
+        dl_file.write(http_stream.read())
+        http_stream.close()
+        dl_file.close()
+    except IOError, (errno, strerror):
+        print "Download failed"
+        print "Error %s: %s" % (errno, strerror)
+        return
+
+    try:
+        os.rename(app_path, backup_path)
+    except OSError, (errno, strerror):
+        print "Unable to rename %s to %s: (%d) %s" \
+            % (app_path, backup_path, errno, strerror)
+        return
+
+    try:
+        os.rename(dl_path, app_path)
+    except OSError, (errno, strerror):
+        print "Unable to rename %s to %s: (%d) %s" \
+            % (dl_path, app_path, errno, strerror)
+        return
+
+    os.chmod(app_path, 0755)
+
+    print "New version installed as %s" % app_path
+    print "(previous version backed up to %s)" % (backup_path)
+    return
 
 
 FILE_TYPES = {
