@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# quick-server
+# quick-file-server
 # GusE 2010.05.24 V0.1
 """
 Run a simple file server
@@ -13,6 +13,7 @@ import os
 import sys
 import thread
 import getopt
+import socket
 import traceback
 from datetime import datetime
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
@@ -109,9 +110,12 @@ def main():
         thread.start_new_thread(server.serve_forever, ())
         raw_input("Press any key to stop server")
     except KeyboardInterrupt:
-        print ''
-    print 'Shutting down server'
-    server.socket.close()
+        print '\nShutting down server'
+        server.socket.close()
+    except socket.error, (errno, message):
+        print "Error starting file-server: %s" % message
+    except Exception, e:
+        print traceback.format_exc()
 
 
 class QuickServerHandler(BaseHTTPRequestHandler):
