@@ -1,0 +1,49 @@
+body { font-family: Verdana, sans-serif; font-size: 12px;}
+a { text-decoration: none; color: #00A; }
+a:hover { text-decoration: underline; }
+#html-index-header { padding: 0; margin: 0.5em auto 0.5em 1em; }
+table#html-index-list { text-align: center; margin: 0 auto 0 1.5em; border-collapse: collapse; }
+#html-index-list thead { border-bottom: 1px solid #555; }
+#html-index-list th:hover { cursor: pointer; cursor: hand; background-color: #EEE; }
+#direction { border: 0; vertical-align: bottom; margin: 0 0.5em;}
+#html-index-list tbody { border-bottom: 1px solid #555;}
+#html-index-list tr, th { line-height: 1.7em; min-height: 25px; }
+#html-index-list tbody tr:hover { background-color: #EEE; }
+.name { text-align: left; width: 35em; }
+.name a, thead .name { padding-left: 22px; }
+.name a { display: block; }
+.size { text-align: right; width: 7em; padding-right: 1em;}
+.date { text-align: right; width: 15em; padding-right: 1em;}
+#html-index-dir-info { margin: 1em auto 0.5em 2em; }
+#html-index-footer { margin: 1em auto 0.5em 2em; font-size: smaller;}
+/* Icons */
+.dir, .back, .file { background-repeat: no-repeat; background-position: 2px 4px;}
+.back { background-image: url('/.virtual/back.png'); }
+.dir { background-image: url('/.virtual/folder.png'); }
+.file { background-image: url('/.virtual/file.png'); }
+.image { background-image: url('/.virtual/image.png'); }
+.video { background-image: url('/.virtual/video.png'); }
+.music { background-image: url('/.virtual/music.png'); }
+.archive { background-image: url('/.virtual/archive.png'); }
+.package { background-image: url('/.virtual/package.png'); }
+.pdf { background-image: url('/.virtual/pdf.png'); }
+.txt { background-image: url('/.virtual/txt.png'); }
+.markup { background-image: url('/.virtual/markup.png'); }
+.code { background-image: url('/.virtual/code.png'); }
+.font { background-image: url('/.virtual/font.png'); }
+.document { background-image: url('/.virtual/document.png'); }
+.spreadsheet { background-image: url('/.virtual/spreadsheet.png'); }
+.presentation { background-image: url('/.virtual/presentation.png'); }
+.application { background-image: url('/.virtual/application.png'); }
+.plugin { background-image: url('/.virtual/plugin.png'); }
+.iso { background-image: url('/.virtual/iso.png'); }
+
+
+body { background-color: #6C6C6C; font-size: 11px; font-family: Verdana, Arial, Helvetica, Sans-Serif; padding:20px; margin:0px; text-align: center; }
+#container { vertical-align: middle; margin: 20px auto; width: 800px; }
+.content { background-color: #FFFFFF; margin: 0px auto; border: 1px solid black; text-align: left; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px; }
+.glow { -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.8); -moz-box-shadow: 0 0 15px rgba(0, 0, 0, 0.8); box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); }
+.header { clear:both; margin: 10px; font-size: 22pt; font-weight: bold; width: 100%; }
+.body { margin: 0px 10px 10px 10px; padding: 10px; background-color: #FFFFFF; border-top: 1px solid #CCCCCC; }
+.footer { margin: 20px 10px 10px 10px; }
+table#html-index-list {margin-left:auto; margin-right:auto;}
