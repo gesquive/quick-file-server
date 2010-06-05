@@ -15,6 +15,7 @@ import thread
 import getopt
 import socket
 import traceback
+from urllib2 import unquote
 from datetime import datetime
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
@@ -23,7 +24,7 @@ __author__ = "Gus Esquivel"
 __copyright__ = "Copyright 2010"
 __credits__ = ["Gus Esquivel"]
 __license__ = "GPL"
-__version__ = "1.0.2"
+__version__ = "1.0.4"
 __maintainer__ = "Gus Esquivel"
 __email__ = "gesquive@gmail.com"
 __status__ = "Production"
@@ -38,9 +39,6 @@ DATE_FORMAT = '%Y-%m-%d&nbsp;%H:%M:%S'
 #TODO: option to hide symlinks
 #TODO: option to hide hidden files
 #TODO: option to add README and show description at top of page?
-#FIXME: Pressing any key actually exits script
-#FIXME: Fix verbosity of .virtual icons
-#FIXME: Directories with spaces cannot be navigated into
 
 def usage():
     usage = \
@@ -119,7 +117,8 @@ def main():
         server = QuickServer(('', server_port), root_dir, list_dir)
         print 'Started HTTPServer...'
         thread.start_new_thread(server.serve_forever, ())
-        raw_input("Press [Enter] to stop server")
+        raw_input("Press [Enter] to stop server\n")
+        server.socket.close()
     except KeyboardInterrupt:
         print '\nShutting down server'
         server.socket.close()
@@ -134,10 +133,10 @@ class QuickServerHandler(BaseHTTPRequestHandler):
         global verbose
         try:
             # remove leading '/'
-            rel_path = self.path[1:]
+            rel_path = unquote(self.path[1:])
             abs_path = os.path.abspath(os.path.join(
                 self.server.root_dir, rel_path))
-            print "rel_path=%s abs_path=%s" % (rel_path, abs_path)
+            if verbose: print "rel_path=%s abs_path=%s" % (rel_path, abs_path)
             if os.path.isfile(abs_path):
                 if verbose: print "File get '%s'" % rel_path
                 content = open(abs_path, 'rb')
