@@ -38,6 +38,9 @@ DATE_FORMAT = '%Y-%m-%d&nbsp;%H:%M:%S'
 #TODO: option to hide symlinks
 #TODO: option to hide hidden files
 #TODO: option to add README and show description at top of page?
+#FIXME: Pressing any key actually exits script
+#FIXME: Fix verbosity of .virtual icons
+#FIXME: Directories with spaces cannot be navigated into
 
 def usage():
     usage = \
@@ -116,7 +119,7 @@ def main():
         server = QuickServer(('', server_port), root_dir, list_dir)
         print 'Started HTTPServer...'
         thread.start_new_thread(server.serve_forever, ())
-        raw_input("Press any key to stop server")
+        raw_input("Press [Enter] to stop server")
     except KeyboardInterrupt:
         print '\nShutting down server'
         server.socket.close()
