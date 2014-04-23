@@ -1,0 +1,15 @@
+## Linux Temporary Files
+*~
+*.tmp
+*.bak
+*.swp
+
+## Python Files
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+## Sublime Text Files
+# workspace files are user-specific
+*.sublime-workspace
+*.sublime-project
